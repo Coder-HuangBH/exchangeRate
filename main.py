@@ -4,13 +4,16 @@ import requests
 from datetime import datetime
 
 API_URL = "https://fx.cmbchina.com/api/v1/fx/rate"
-FEISHU_WEBHOOK = os.environ.get("FEISHU_WEBHOOK")
-BUY_THRESHOLD_STR = os.environ.get("BUY_THRESHOLD")
-SELL_THRESHOLD_STR = os.environ.get("SELL_THRESHOLD")
-BUY_THRESHOLD = float(BUY_THRESHOLD_STR) if BUY_THRESHOLD_STR else None
-SELL_THRESHOLD = float(SELL_THRESHOLD_STR) if SELL_THRESHOLD_STR else None
-BUY_ADJUST_STEP = float(os.environ.get("BUY_ADJUST_STEP", "1"))
-SELL_ADJUST_STEP = float(os.environ.get("SELL_ADJUST_STEP", "1"))
+
+def get_env_float(key, default=None):
+    value = os.environ.get(key, "")
+    return float(value) if value.strip() else default
+
+FEISHU_WEBHOOK = os.environ.get("FEISHU_WEBHOOK", "").strip() or None
+BUY_THRESHOLD = get_env_float("BUY_THRESHOLD")
+SELL_THRESHOLD = get_env_float("SELL_THRESHOLD")
+BUY_ADJUST_STEP = get_env_float("BUY_ADJUST_STEP", 1)
+SELL_ADJUST_STEP = get_env_float("SELL_ADJUST_STEP", 1)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY")
 
