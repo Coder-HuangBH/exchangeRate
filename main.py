@@ -23,14 +23,11 @@ def get_exchange_rate():
         response = requests.get(API_URL, timeout=10)
         response.raise_for_status()
         data = response.json()
-        print(f"get_exchange_rate {data}")
-        for item in data.get("data", []):
+        for item in data.get("body", []):
             if item.get("ccyNbr") == "美元":
                 return {
                     "rthOfr": float(item.get("rthOfr", 0)),
                     "rthBid": float(item.get("rthBid", 0)),
-                    "rthOfrDesc": item.get("rthOfrDesc", ""),
-                    "rthBidDesc": item.get("rthBidDesc", ""),
                 }
         return None
     except Exception as e:
