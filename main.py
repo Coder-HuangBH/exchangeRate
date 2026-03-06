@@ -64,7 +64,8 @@ def update_github_variable(variable_name, new_value):
         print("未配置GitHub Token或仓库信息，无法更新变量")
         return False
     try:
-        url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/actions/variables/{variable_name}"
+        # url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/actions/variables/{variable_name}"
+        url = "https://api.github.com/repos/OWNER/REPO/environments/ENVIRONMENT_NAME/variables/NAME"
         headers = {
             "Authorization": f"token {GITHUB_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
