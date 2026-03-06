@@ -23,6 +23,7 @@ def get_exchange_rate():
         response = requests.get(API_URL, timeout=10)
         response.raise_for_status()
         data = response.json()
+        print("get_exchange_rate {data}")
         for item in data.get("data", []):
             if item.get("ccyNbr") == "美元":
                 return {
@@ -34,6 +35,7 @@ def get_exchange_rate():
         return None
     except Exception as e:
         print(f"获取汇率失败: {e}")
+        send_feishu_notification(f"获取汇率失败: {e}")
         return None
 
 
@@ -110,8 +112,8 @@ def main():
         "",
     ]
     
+    notification_lines.append(f"美元现汇卖出价：{rthOfr}")
     if BUY_THRESHOLD is not None:
-        notification_lines.append(f"美元现汇卖出价：{rthOfr}")
         notification_lines.append(f"目标买入价：{BUY_THRESHOLD}")
         
         if rthOfr <= BUY_THRESHOLD:
@@ -119,10 +121,10 @@ def main():
             should_notify = True
             new_buy_threshold = BUY_THRESHOLD - BUY_ADJUST_STEP
             update_github_variable("BUY_THRESHOLD", new_buy_threshold)
-        notification_lines.append("")
     
+    notification_lines.append("")
+    notification_lines.append(f"美元现汇买入价：{rthBid}")
     if SELL_THRESHOLD is not None:
-        notification_lines.append(f"美元现汇买入价：{rthBid}")
         notification_lines.append(f"目标卖出价：{SELL_THRESHOLD}")
         
         if rthBid >= SELL_THRESHOLD:
