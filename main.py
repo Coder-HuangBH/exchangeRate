@@ -23,7 +23,7 @@ def get_exchange_rate():
         response = requests.get(API_URL, timeout=10)
         response.raise_for_status()
         data = response.json()
-        print("get_exchange_rate {data}")
+        print(f"get_exchange_rate {data}")
         for item in data.get("data", []):
             if item.get("ccyNbr") == "美元":
                 return {
