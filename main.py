@@ -18,7 +18,7 @@ BUY_THRESHOLD = get_env_float("BUY_THRESHOLD")
 SELL_THRESHOLD = get_env_float("SELL_THRESHOLD")
 BUY_ADJUST_STEP = get_env_float("BUY_ADJUST_STEP", 1)
 SELL_ADJUST_STEP = get_env_float("SELL_ADJUST_STEP", 1)
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+GITHUB_TOKEN = os.environ.get("PAT_TOKEN") or os.environ.get("GITHUB_TOKEN")
 GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY")
 
 

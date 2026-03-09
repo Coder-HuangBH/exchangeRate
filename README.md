@@ -51,6 +51,15 @@ python main.py
 | Secret 名称 | 说明 | 示例 |
 |------------|------|------|
 | `FEISHU_WEBHOOK` | 飞书机器人 Webhook 地址 | `https://open.feishu.cn/open-apis/bot/v2/hook/xxx` |
+| `PAT_TOKEN` | GitHub Personal Access Token（用于更新变量） | `ghp_xxxx` |
+
+#### 创建 PAT_TOKEN 步骤
+
+1. 登录 GitHub → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+2. 点击 **Generate new token (classic)**
+3. 勾选 `repo` 权限（完整仓库访问权限）
+4. 生成并复制 Token
+5. 在仓库 Secrets 中添加 `PAT_TOKEN`
 
 ### 2. 配置 Variables
 
@@ -63,15 +72,7 @@ python main.py
 | `BUY_ADJUST_STEP` | 买入阈值调整幅度 | 否 | 1 |
 | `SELL_ADJUST_STEP` | 卖出阈值调整幅度 | 否 | 1 |
 
-### 3. 配置 GITHUB_TOKEN 权限
-
-需要在仓库设置中为 `GITHUB_TOKEN` 添加写入变量权限：
-
-1. 进入仓库 **Settings** → **Actions** → **General**
-2. 在 **Workflow permissions** 中选择 **Read and write permissions**
-3. 保存设置
-
-### 4. 启用 GitHub Actions
+### 3. 启用 GitHub Actions
 
 推送代码到仓库后，GitHub Actions 会自动每10分钟执行一次检查。也可以手动触发：
 

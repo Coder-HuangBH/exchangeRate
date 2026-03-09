@@ -29,6 +29,6 @@ jobs:
           SELL_THRESHOLD: ${{ vars.SELL_THRESHOLD }}
           BUY_ADJUST_STEP: ${{ vars.BUY_ADJUST_STEP }}
           SELL_ADJUST_STEP: ${{ vars.SELL_ADJUST_STEP }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: python main.py
