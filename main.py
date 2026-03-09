@@ -1,9 +1,13 @@
 import os
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 API_URL = "https://fx.cmbchina.com/api/v1/fx/rate"
+BEIJING_TZ = timezone(timedelta(hours=8))
+
+def get_beijing_time():
+    return datetime.now(BEIJING_TZ).strftime('%Y-%m-%d %H:%M:%S')
 
 def get_env_float(key, default=None):
     value = os.environ.get(key, "")
@@ -64,8 +68,8 @@ def update_github_variable(variable_name, new_value):
         print("未配置GitHub Token或仓库信息，无法更新变量")
         return False
     try:
-        # url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/actions/variables/{variable_name}"
-        url = "https://api.github.com/repos/OWNER/REPO/environments/ENVIRONMENT_NAME/variables/NAME"
+        url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/actions/variables/{variable_name}"
+        print(f"请求URL: {url}, GITHUB_REPOSITORY: {GITHUB_REPOSITORY}")
         headers = {
             "Authorization": f"token {GITHUB_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
@@ -84,7 +88,7 @@ def update_github_variable(variable_name, new_value):
 
 
 def main():
-    print(f"开始执行汇率检查 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"开始执行汇率检查 - {get_beijing_time()}")
     print(f"买入阈值: {BUY_THRESHOLD}, 卖出阈值: {SELL_THRESHOLD}")
     print(f"买入调整幅度: {BUY_ADJUST_STEP}, 卖出调整幅度: {SELL_ADJUST_STEP}")
     
@@ -104,9 +108,10 @@ def main():
     print(f"当前美元现汇买入价: {rthBid}")
     
     should_notify = False
+    update_results = []
     notification_lines = [
         "汇率提醒",
-        f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"当前时间：{get_beijing_time()}",
         "",
     ]
     
@@ -118,7 +123,8 @@ def main():
             notification_lines.append("✅ 已达到买入目标！")
             should_notify = True
             new_buy_threshold = BUY_THRESHOLD - BUY_ADJUST_STEP
-            update_github_variable("BUY_THRESHOLD", new_buy_threshold)
+            success = update_github_variable("BUY_THRESHOLD", new_buy_threshold)
+            update_results.append(f"买入阈值更新: {BUY_THRESHOLD} → {new_buy_threshold} ({'成功' if success else '失败'})")
     
     notification_lines.append("")
     notification_lines.append(f"美元现汇买入价：{rthBid}")
@@ -129,9 +135,14 @@ def main():
             notification_lines.append("✅ 已达到卖出目标！")
             should_notify = True
             new_sell_threshold = SELL_THRESHOLD + SELL_ADJUST_STEP
-            update_github_variable("SELL_THRESHOLD", new_sell_threshold)
+            success = update_github_variable("SELL_THRESHOLD", new_sell_threshold)
+            update_results.append(f"卖出阈值更新: {SELL_THRESHOLD} → {new_sell_threshold} ({'成功' if success else '失败'})")
     
     if should_notify:
+        if update_results:
+            notification_lines.append("")
+            notification_lines.append("变量更新结果：")
+            notification_lines.extend(update_results)
         message = "\n".join(notification_lines)
         send_feishu_notification(message)
     else:
